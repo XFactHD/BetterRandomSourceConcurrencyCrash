@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[43,)"
+license="LGPL v3"
+
+[[mods]]
+    modId="better_randomsource_concurrency_crash"
+    version="${file.jarVersion}"
+    displayName="Example Mod"
+    displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+    authors="Love, Cheese and small house plants"
+    displayTest="IGNORE_ALL_VERSION"
+    description='''
+    '''
+
+[[dependencies.better_randomsource_concurrency_crash]]
+    modId="forge"
+    mandatory=true
+    versionRange="[43,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.better_randomsource_concurrency_crash]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.2,1.20)"
+    ordering="NONE"
+    side="BOTH"

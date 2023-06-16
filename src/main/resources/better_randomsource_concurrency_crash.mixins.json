@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "xfacthd.better_randomsource_concurrency_crash.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "better_randomsource_concurrency_crash.refmap.json",
+    "mixins": [
+        "MixinLegacyRandomSource"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "minVersion": "0.8"
+}
