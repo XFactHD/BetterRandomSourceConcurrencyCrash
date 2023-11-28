@@ -16,15 +16,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MixinLegacyRandomSource
 {
     @Unique
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger BRSCC$LOGGER = LogUtils.getLogger();
 
     @Unique
-    private final AtomicReference<Thread> currentThread = new AtomicReference<>();
+    private final AtomicReference<Thread> brscc$currentThread = new AtomicReference<>();
 
     @Inject(method = "next", at = @At("HEAD"))
     private void brscc$onNextHead(int pSize, CallbackInfoReturnable<Integer> cir)
     {
-        Thread last = currentThread.getAndSet(Thread.currentThread());
+        Thread last = brscc$currentThread.getAndSet(Thread.currentThread());
         if (last != null)
         {
             throw ThreadingDetector.makeThreadingException("LegacyRandomSource (Mixin)", last);
@@ -34,10 +34,10 @@ public class MixinLegacyRandomSource
     @Inject(method = "next", at = @At("TAIL"))
     private void brscc$onNextTail(int pSize, CallbackInfoReturnable<Integer> cir)
     {
-        Thread last = currentThread.getAndSet(null);
+        Thread last = brscc$currentThread.getAndSet(null);
         if (last != Thread.currentThread())
         {
-            LOGGER.error("Thread changed unexpectedly", new Throwable());
+            BRSCC$LOGGER.error("Thread changed unexpectedly", new Throwable());
         }
     }
 }

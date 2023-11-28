@@ -1,58 +1,37 @@
 plugins {
+    id 'java-library'
     id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-	id 'org.spongepowered.mixin' version '0.7.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.50'
 }
 
-version = '2.0'
+version = mod_version
 group = 'xfacthd.better_randomsource_concurrency_crash'
-archivesBaseName = 'BetterRandomSourceConcurrencyCrash'
+
+base {
+    archivesName = 'BetterRandomSourceConcurrencyCrash'
+}
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
+runs {
+    configureEach {
+        // Recommended logging data for a userdev environment
+        //systemProperty 'forge.logging.markers', 'REGISTRIES'
+        // Recommended logging level for the console
+        systemProperty 'forge.logging.console.level', 'debug'
+        
+        modSource project.sourceSets.main
+    }
+    client {
+        workingDirectory project.file('run_client')
+    }
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'better_randomsource_concurrency_crash'
-
-            mods {
-                better_randomsource_concurrency_crash {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            property 'forge.logging.console.level', 'debug'
-
-            property 'forge.enabledGameTestNamespaces', 'better_randomsource_concurrency_crash'
-
-            mods {
-                better_randomsource_concurrency_crash {
-                    source sourceSets.main
-                }
-            }
-        }
+    server {
+        workingDirectory project.file('run_server')
+        programArgument '--nogui'
     }
 }
 
@@ -61,40 +40,30 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.0.3'
-	
-	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation("net.neoforged:neoforge:${neo_version}")
 }
 
-mixin {
-    add sourceSets.main, 'better_randomsource_concurrency_crash.refmap.json'
-    config 'better_randomsource_concurrency_crash.mixins.json'
-}
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        minecraft_version: minecraft_version,
+        minecraft_version_range: minecraft_version_range,
+        neo_version: neo_version,
+        neo_version_range: neo_version_range,
+        loader_version_range: loader_version_range,
+        mod_version: mod_version,
+        pack_format_number: pack_format_number
+    ]
+    inputs.properties replaceProperties
 
-// Example for how to get properties into the manifest for reading at runtime.
-jar {
-    manifest {
-        attributes([
-                "Specification-Title"     : "BetterRandomSourceConcurrencyCrash",
-                "Specification-Vendor"    : "XFactHD",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "XFactHD"
-        ])
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
 }
 
-// Example configuration to allow publishing using the maven-publish plugin
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar')
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-// publish.dependsOn('reobfJar')
-
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        register('mavenJava', MavenPublication) {
+            from components.java
         }
     }
     repositories {

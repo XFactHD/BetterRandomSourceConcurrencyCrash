@@ -1,27 +1,30 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="${loader_version_range}"
 license="LGPL v3"
+issueTrackerURL="https://github.com/XFactHD/BetterRandomSourceConcurrencyCrash"
 
 [[mods]]
     modId="better_randomsource_concurrency_crash"
-    version="${file.jarVersion}"
-    displayName="Example Mod"
-    displayURL="https://legacy.curseforge.com/minecraft/mc-mods/betterrandomsourceconcurrencycrash"
-    authors="Love, Cheese and small house plants"
+    version="${mod_version}"
+    displayName="BetterRandomSourceConcurrencyCrash"
+    displayURL="https://curseforge.com/minecraft/mc-mods/betterrandomsourceconcurrencycrash"
+    authors="XFactHD"
     displayTest="IGNORE_ALL_VERSION"
-    description='''
-    '''
+    description=''''''
+
+[[mixins]]
+    config="better_randomsource_concurrency_crash.mixins.json"
 
 [[dependencies.better_randomsource_concurrency_crash]]
-    modId="forge"
+    modId="neoforge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="${neo_version_range}"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.better_randomsource_concurrency_crash]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1,1.21)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
